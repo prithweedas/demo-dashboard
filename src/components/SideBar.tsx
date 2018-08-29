@@ -6,16 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { updateList } from '../store/ActionCreators';
-
-interface IPerson {
-  id?: number;
-  Description: string;
-  Dislikes: string[];
-  img: string;
-  name: string;
-  Likes: string[];
-  rating: number;
-}
+import { IPerson } from '../Types';
 
 type IUpdateList = (list: IPerson[]) => void;
 
@@ -37,7 +28,10 @@ class SideBar extends React.Component<IProps, IState> {
       allSelected: false,
       selectedItems: [],
       persons: [
-        ...this.props.persons.map((person, i) => ({ ...person, id: i }))
+        ...this.props.persons.map((person, i) => ({
+          ...person,
+          id: i
+        }))
       ]
     };
   }
@@ -68,6 +62,7 @@ class SideBar extends React.Component<IProps, IState> {
   handleSelectItem = (i: number) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    e.stopPropagation();
     if (e.target.checked) {
       this.setState(state => ({
         selectedItems: [...state.selectedItems, i]
