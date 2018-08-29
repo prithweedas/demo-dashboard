@@ -9,12 +9,14 @@ import { updateList } from '../store/ActionCreators';
 import { IPerson } from '../Types';
 
 type IUpdateList = (list: IPerson[]) => void;
-type ISelectUser = (list: IPerson) => any;
+type ISelectUser = (list: IPerson) => void;
+type IDeselectUser = (list: number[]) => void;
 
 interface IProps {
   persons: IPerson[];
   updateList: IUpdateList;
   selectUser: ISelectUser;
+  deselectUser: IDeselectUser;
 }
 
 interface IState {
@@ -52,6 +54,7 @@ class SideBar extends React.Component<IProps, IState> {
       newList = newList.filter(person => person.id !== item);
     });
     this.props.updateList(newList);
+    this.props.deselectUser(this.state.selectedItems);
     this.setState({ selectedItems: [] });
   };
 

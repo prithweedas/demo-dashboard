@@ -12,7 +12,16 @@ class App extends React.Component {
   state: IState = {
     selectedUser: undefined
   };
-
+  deselectUser = (list: number[]) => {
+    if (
+      this.state.selectedUser &&
+      list.indexOf(
+        this.state.selectedUser.id ? this.state.selectedUser.id : -1
+      ) >= 0
+    ) {
+      this.setState({ selectedUser: undefined });
+    }
+  };
   selectUser = (person: IPerson) => this.setState({ selectedUser: person });
   public render() {
     const { selectedUser } = this.state;
@@ -26,7 +35,10 @@ class App extends React.Component {
             position: 'relative'
           }}
         >
-          <SideBar selectUser={this.selectUser} />
+          <SideBar
+            deselectUser={this.deselectUser}
+            selectUser={this.selectUser}
+          />
           <div style={{ flex: 1 }}>
             {selectedUser && (
               <div
