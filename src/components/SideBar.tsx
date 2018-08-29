@@ -4,8 +4,11 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { updateList } from '../store/ActionCreators';
 
 interface IPerson {
+  id?: number;
   Description: string;
   Dislikes: string[];
   img: string;
@@ -14,13 +17,17 @@ interface IPerson {
   rating: number;
 }
 
+type IUpdateList = (list: IPerson[]) => void;
+
 interface IProps {
   persons: IPerson[];
+  updateList: IUpdateList;
 }
 
 interface IState {
   allSelected: boolean;
   selectedItems: number[];
+  persons: IPerson[];
 }
 
 class SideBar extends React.Component<IProps, IState> {
@@ -28,7 +35,10 @@ class SideBar extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       allSelected: false,
-      selectedItems: []
+      selectedItems: [],
+      persons: [
+        ...this.props.persons.map((person, i) => ({ ...person, id: i }))
+      ]
     };
   }
   handleAllSelectedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +49,21 @@ class SideBar extends React.Component<IProps, IState> {
         : []
     });
   };
+
+  delete = () => {
+    let newList = [...this.state.persons];
+    this.state.selectedItems.forEach(item => {
+      newList = newList.filter(person => person.id !== item);
+    });
+    this.props.updateList(newList);
+    this.setState({ selectedItems: [] });
+  };
+
+  componentWillReceiveProps(newProps: IProps) {
+    this.setState({
+      persons: [...newProps.persons.map((person, i) => ({ ...person, id: i }))]
+    });
+  }
 
   handleSelectItem = (i: number) => (
     e: React.ChangeEvent<HTMLInputElement>
@@ -66,12 +91,12 @@ class SideBar extends React.Component<IProps, IState> {
           />
           <Typography variant="body2">People</Typography>
           <div style={{ flex: 1 }} />
-          <IconButton aria-label="Delete">
+          <IconButton onClick={this.delete} aria-label="Delete">
             <DeleteIcon />
           </IconButton>
         </div>
         <div>
-          {this.props.persons.map((person, i) => {
+          {this.state.persons.map((person, i) => {
             return (
               <div key={i} style={styles.person}>
                 <Checkbox
@@ -118,4 +143,15 @@ const mapStateToProps = (state: any) => ({
   persons: state
 });
 
-export default connect(mapStateToProps)(SideBar);
+const mapActiontoProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      updateList
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapActiontoProps
+)(SideBar);
