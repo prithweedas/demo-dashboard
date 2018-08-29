@@ -9,10 +9,12 @@ import { updateList } from '../store/ActionCreators';
 import { IPerson } from '../Types';
 
 type IUpdateList = (list: IPerson[]) => void;
+type ISelectUser = (list: IPerson) => any;
 
 interface IProps {
   persons: IPerson[];
   updateList: IUpdateList;
+  selectUser: ISelectUser;
 }
 
 interface IState {
@@ -74,6 +76,8 @@ class SideBar extends React.Component<IProps, IState> {
     }
   };
 
+  selectUser = (person: IPerson) => (e: any) => this.props.selectUser(person);
+
   public render() {
     return (
       <div style={styles.container}>
@@ -93,7 +97,11 @@ class SideBar extends React.Component<IProps, IState> {
         <div>
           {this.state.persons.map((person, i) => {
             return (
-              <div key={i} style={styles.person}>
+              <div
+                onClick={this.selectUser(person)}
+                key={i}
+                style={styles.person}
+              >
                 <Checkbox
                   style={{ marginLeft: '0.7rem' }}
                   onChange={this.handleSelectItem(i)}
@@ -130,7 +138,8 @@ const styles = {
     alignItems: 'center',
     borderBottom: '1px solid #c7bebe',
     borderTop: '1px solid #c7bebe',
-    marginBottom: '0.7rem'
+    marginBottom: '0.7rem',
+    cursor: 'pointer'
   }
 };
 

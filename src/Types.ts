@@ -5,5 +5,5 @@ export interface IPerson {
   img?: string;
   name: string;
   Likes?: string[];
-  rating?: number;
+  rating: number;
 }
